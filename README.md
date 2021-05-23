@@ -10,7 +10,7 @@ Ce jeu consiste à détruire des robots ennemis qui nous tire dessus. Pour cela,
     
 ---------------------------------------------------------------
 
-LANCER LE JEU :
+UTILISATION DE µPYTHON:
 
 Afin de jouer au jeu il faudra tout d'abord mettre python sur la carte, car ce n'est pas un langage prévu de base par la carte.
 Il faudra alors suivre les étapes suivantes :
