@@ -1,14 +1,25 @@
 # main.py -- put your code here!
 from pyb import UART, SPI, Pin, Timer
+import random
 
-#init uart2, 9600 bauds, 8bits
+
+#liste ennemy
+ennemy = [] #tableau pour stocker les robots ennemy
+nb_missile = [] #tableau pour stocker les missiles
+
+#init uart2, 115200 bauds, 8bits
 numero_uart = 2
 uart = UART(numero_uart)
-uart.init(9600, bits=8, parity=None, stop=1) 
+uart.init(115200, bits=8, parity=None, stop=1) 
 
+
+#init timer
+t = Timer(4, freq = 1)
+t1 = Timer(2, freq = 2)
 
 #init chip select
-CS = Pin("PE3", Pin.OUT_PP) 
+CS = Pin("PE3", Pin.OUT_PP)
+ 
 #init spi
 SPI_1 = SPI(
 	    1,  # SPI1: PA5, PA6, PA7
@@ -36,137 +47,201 @@ def move(x, y):
 
 #fonction SPI
 def read_reg(addr):
-    CS.low()
-    SPI_1.send(addr | 0x80)  # 0x80 pour mettre le R/W à 1
-    tab_values = SPI_1.recv(1)  # je lis une liste de 1 octet
-    CS.high()
-    return tab_values[0]
+	CS.low()
+    	SPI_1.send(addr | 0x80)  # 0x80 pour mettre le R/W à 1
+    	tab_values = SPI_1.recv(1)  # je lis une liste de 1 octet
+    	CS.high()
+    	return tab_values[0]
 
 
 def write_reg(addr, value):
-    CS.low()
-    SPI_1.send(addr | 0x00)  # write
-    SPI_1.send(value)
-    CS.high()
+	CS.low()
+    	SPI_1.send(addr | 0x00)  # write
+    	SPI_1.send(value)
+    	CS.high()
 
 
 def convert_value(high, low):
-    value = (high << 8) | low
-    if value & (1 << 15):
-        # negative number
-        value = value - (1 << 16)
-    return value
+	value = (high << 8) | low
+    	if value & (1 << 15):
+        	# negative number
+        	value = value - (1 << 16)
+    	return value
 
 
 def read_acceleration(base_addr):
-    low = read_reg(base_addr)
-    high = read_reg(base_addr + 1)
-    return convert_value(high, low)
+	low = read_reg(base_addr)
+    	high = read_reg(base_addr + 1)
+    	return convert_value(high, low)
+
 
 #affichage ecran jeu
-def affiche_ecran():
-	i=0
-	j=0
-	while i<SCREEN_LENGTH:
-		move(i,0)
-		uart.write("#")
-		move(i,SCREEN_HEIGTH)
-		uart.write("#")
-		i++
-	while j<SCREEN_HEIGTH:
-		move(0,j)
-		uart.write("#")
-		move(SCREEN_LENGTH,j)
-		uart.write("#")
-		j++
+def affichage_ecran():
+    
+    for i in range (SCREEN_LENGTH) : #affichage ligne
+        move(i,0)
+        uart.write("#")
+        move(i,SCREEN_HEIGTH)
+        uart.write("#")
+        
+    for j in range (SCREEN_HEIGTH) : #affichage colonne
+        move(0,j)
+        uart.write("#")
+        move(SCREEN_LENGTH,j)
+        uart.write("#")
+	
 
 #classe 
 class Vaisseau:
-	def init(self, x, y):
+	def init(self, x, y, skin):
 		self.x = x
 		self.y = y
-	skin
+		self.skin = skin
+
 
 #missile
 class Missile:
-	def init(self, x, y):
+	def init(self, x, y, skin, nb_missile_max):
 		self.x = x
 		self.y = y
-	skin
-
-class robot_ennemi:
-	def init(self, x, y):
-		self.x = x
-		self.y = y
-	skin
+		self.skin = skin
+		self.nb_missile_max = nb_missile_max
 	
 
-#fonction vaisseau
-def affichage_vaisseau(Vaisseau v):
-	move(v.x,v.y)
-	uart.write(v.skin)
 
-def mouv_vaisseau(Vaisseau v):
+class Robot_ennemy:
+	def init(self, x, y, skin):
+		self.x = x
+		self.y = y
+		self.skin = skin
+	nb_robot = 0
+	
+
+
+class Missile_mechant:
+	def init(self, x, y, skin):
+		self.x = x
+		self.y = y
+		self.skin = skin
+
+
+def affichage_vaisseau(x, y, skin):
+	move(x,y)
+	uart.write(skin)
+
+
+def affichage_robot_ennemy(Robot_ennemy r1):
+	r1.y = 0 #affichage robot ennemy à partir de la première colonne
+	r1.skin = "v=A=v"
+	while r1.y>= 4: #affichage sur 4 colonne
+		r1.x = 0
+		while r1.x<SCREEN_LENGTH: #affichage sur toute la ligne
+			uart.write(r1.skin) # affichage skin robot ennemi
+			r1.x+=10 #espace de 10 cases entre les robots 
+			move(r1.x,r1.y) 
+			ennemy.append(r1) #ajout robot ennemi dans le tableau
+			r1.nb_robot++ #ajout nombre robot ennemi
+		r1.y--
+
+i = 0
+def tir_missile(Missile m1, Robot_ennemy r1, Vaisseau v):
+	while i<m1.nb_missile_max:
+		if push_button == 1: #appui sur le bouton
+			v.skin = "0X0"
+			m1.visible = True
+			m1.nb_missile.append(m1.skin)#ajout missile
+		while m1.visible = True:
+			uart.write(m1.skin)
+			if r1.x == m1.x and r1.y = m1.y:#position missile = position robot ennemi
+				m1.visible = False
+				destruct_robot_ennemy(r1)
+			elif m1.x == SCREEN_HEIGTH: #missile en fin de course
+				m1.visible = False
+			else: #pas d'obstacle
+				uart.write(" ")
+				m1.x++	
+				move(m1.x, m1.y)
+		i++	
+		
+def mouv_vaisseau(x,y, skin):
 	addr_who_I_am = 0x0F
 	addr_x_accel = 0x28
-	addr_y_accel = 0x2A
-	addr_z_accel = 0x2C
-	
+
 	value = read_reg(addr_who_I_am)
 
-	if value != 63:
-		print("error")
-	else
-		clear_screen()
-		uart.write(v.skin)
-		addr_ctrl_reg4 = 0x20
-		write_reg(addr_ctrl_reg4, 0x77)
-		x_accel = read_acceleration(addr_x_accel)
-		
-		if x_accel<=300
-			v.x += 1
-		elif x_accel>=-300
-			v.x -=1
-		else
-			v.x = v.x	
-		move(v.x, v.y)
 
-def mouv_missile(Vaisseau v1, robot_ennemi r1):
-	if push_button.value() = 1:
-		m = Missile(v1.x, v1.y, "°")
-		v1.skin = "0x0"
-		while !r1.x | !r1.y:
-			m.y+=1
-			move(m.x,m.y)
-			
-			
-#fonction robot_ennemy
-def affichage_robot_ennemy(robot_ennemi r1, colonne):
-	r1.x = 0
-	r1.y = SCREEN_HEIGTH
-	r1.skin = "v=A=v"
-	i=0
-	while i<colonne:
-		if i<SCREEN_LENGTH
-			uart.write(r1.skin)
-			r1.x+=3
-			move(r1.x,r1.y)
-		i++
-		
-
-def tir_ennemi():
+	addr_ctrl_reg4 = 0x20
+	write_reg(addr_ctrl_reg4, 0x77)
+	x_accel = read_acceleration(addr_x_accel)
 	
+	if x_accel>=300 and v.x<SCREEN_LENGTH: #carte penchée vers la droite
+		x += 1
+	elif x_accel<=-300 and v.x>0: #carte penchée vers la gauche
+		x -=1
+	else:
+		x = x
+	uart.write(" ")#suppression de l'ancien vaisseau	
+	affichage_vaisseau(x, y, skin) #affichage vaisseau
+
+
+def mouv_robot_ennemy(Robot_ennemy r): #mouvement robot ennemi (ne fonctionne pas)
+	r.x++
+	r.y++
+	move(r.y, r.x)
+	uart.write(r.skin)
+
+
+def destruct_vaisseau(Vaisseau v): #destruction de notre vaisseau
+	clear_screen()
+	uart.write("BOOM , LOOSER")	
+
+
+def destruct_robot_ennemy(Robot_ennemy r):
+	move(r.x, r.y)
+	uart.write(" ") #destruction robot ennemi
+	r.nb_robot-- #suppression d'un robot ennemi
+
+
+def tir_ennemy(Missile_mechant m, Robot_ennemy r, Vaisseau v):
+	robot = choice().ennemy #choix dans le tableau des ennemis
+	robot.y = m.y #definition du point de départ de notre missile
+	
+	if m.x == v.x and m.y == v.y: #position missile = position vaisseau
+		destruct_vaisseau(v)
+	elif m.x==0: #missile en fin de course
+		move(m.x, m.y)
+		uart.write(" ") #suppression missile
+	else: #pas d'obstacle
+		move(m.x, m.y)
+		uart.write(m.skin)
+		m.x++ #missile qui descend
+		
+	
+
 
 
 def main():
-	v = Vaisseau(100,15,"0_0")
-	r1 = robot_ennemi(0,0, "v=A=v")
-	#mouv_vaisseau()
-	#affichage_robot_ennemy(r1,3)
-	#mouv_missile(v,r1)
+	x_vaisseau=100
+	y_vaisseau = 15
+	skin_vaisseau = "0_0"
+	v = Vaisseau(x_vaisseau, y_vaisseau, skin_vaisseau)
+	r1 = Robot_ennemi(0,0, "v=A=v")
+	Missile m(v.x, v.y, "°")
+	Missile_mechant mm(r1.x, r1.y, "|")
+	
+	
+	
 	while True:
-		affichage_ecran()
-		affichage_vaisseau(v)
-	
-	
+		affichage_ecran() 
+		affichage_robot_ennemy(r1) 
+		while r1.nb_robot>0: #tant qu'il y a des robot ennemis
+			mouv_vaisseau(x_vaisseau, y_vaisseau, skin_vaisseau) # fonction mouvement de notre vaisseau
+			tir_missile(m, r1, v) #fonction du tir de notre vaisseau
+			t.callback(mouv_robot_ennemy(r1)) #fait bouger les robots ennemis à chaque seconde
+			t1.callback(tir_ennemy(mm, r1, v)) #tir ennemi toutes les 0.5 seconde
+			
+		move(50,25)	
+		uart.write("C'est une belle victoire qu'on a là")
 
+clear_screen()
+main()
