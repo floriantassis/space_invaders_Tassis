@@ -1,6 +1,6 @@
-# space_invaders_Tassis
+# space_invaders Florian Tassis
 
-Florian TASSIS
+
 ---------------------------------------------------------------
 
 OBJECTIF :
