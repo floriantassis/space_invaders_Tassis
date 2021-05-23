@@ -3,14 +3,14 @@
 Florian TASSIS
 ---------------------------------------------------------------
 
-# OBJECTIF :
+OBJECTIF :
 
 Le but de ce projet est de réalisé, en python, le jeu space invaders à notre manière
 Ce jeu consiste à détruire des robots ennemis qui nous tire dessus. Pour cela, utiliser le bouton poussoir présent sur la carte afin de pouvoir détruire les ennemis. Nous allons ausi utiliser l'accéléromètre présent sur la carte afin de déplacer le robot. Sortirons nous vainqueur de cette guerre où la pitié n'a pas sa place? Bah on verra déjà si on arrive à le coder.
     
 ---------------------------------------------------------------
 
-# LANCER LE JEU :
+LANCER LE JEU :
 
 Afin de jouer au jeu il faudra tout d'abord mettre python sur la carte, car ce n'est pas un langage prévu de base par la carte.
 Il faudra alors suivre les étapes suivantes :
@@ -55,7 +55,7 @@ Il faudra alors suivre les étapes suivantes :
 
 ---------------------------------------------------------------
 
-# DIFFICULTES RENCONTREES :
+DIFFICULTES RENCONTRÉES :
 
 Ce projet m'a permis de développer certaines compétences et d'appliquer ce que nous avons appris en cours. Il me manquer cependant l'utilisation des classes qui m'aurait bien aidé. J'ai en effet essayer de les utiliser mais je pense que je faisait des erreurs qui m'ont empéché de pouvoir plus avancer ce projet. Ces problèmes m'ont fait perdre beaucoup de temps et je n'ai donc pas pu finir ce projet dans les temps. De plus, je n'ai pas forcément l'habitude de coder en python et je garde certains automatismes du C qui ne sont pas compatible avec python ce qui me fait également perdre du temps. 
 
@@ -63,5 +63,5 @@ J'ai aussi rencontré des difficultés dans le fait d'afficher tous les robots e
 
  ---------------------------------------------------------------
 
-# RETOUR GENERAL SUR LE PROJET :
+RETOUR SUR LE PROJET :
 Je trouve l'idée de réaliser ce projet très bonne. En effet, elle nous permet d'utiliser les compétences acquises en théories dans un projet ludique qui nous donne envie d'aller au bout. Je trouve que nous sommes bien accompagné durant tout le long du projet. Je n'ai cependant pas eu le temps  de finir ce projet car j'ai eu certains problèmes personnels ces derniers temps. Je vais esayer de le finir pendant mon temps libre afin d'améliorer mes compétences en python. En bref, j'ai trouvé très intéressant ce projet et la façon dont il a été mené.
